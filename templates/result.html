@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Security Report — AI Code Scanner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+</head>
+<body>
+
+<header class="site-header">
+    <div class="header-inner">
+        <div class="header-brand">
+            <svg class="brand-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#58a6ff" stroke-width="2" stroke-linejoin="round" fill="rgba(88,166,255,0.08)"/>
+                <path d="M9 12L11 14L15 10" stroke="#58a6ff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <div class="header-text">
+                <h1>Security Report</h1>
+                <span class="header-sub">AI-Assisted Secure Code Analyzer</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn-pdf" id="pdfBtn" onclick="exportPDF()">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+                    <path d="M14 2H6C5.47 2 4.96 2.21 4.59 2.59C4.21 2.96 4 3.47 4 4V20C4 20.53 4.21 21.04 4.59 21.41C4.96 21.79 5.47 22 6 22H18C18.53 22 19.04 21.79 19.41 21.41C19.79 21.04 20 20.53 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <line x1="12" y1="18" x2="12" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    <polyline points="9,15 12,18 15,15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <span id="pdfBtnText">Download PDF</span>
+            </button>
+            <a href="/" class="btn-back">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+                    <path d="M19 12H5M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                Scan New File
+            </a>
+        </div>
+    </div>
+</header>
+
+<script>
+function exportPDF() {
+    const btn     = document.getElementById('pdfBtn');
+    const btnText = document.getElementById('pdfBtnText');
+    btn.disabled  = true;
+    btnText.textContent = 'Generating…';
+
+    const element = document.querySelector('.page');
+    const opt = {
+        margin:     [12, 12, 12, 12],
+        filename:   'security-report.pdf',
+        image:      { type: 'jpeg', quality: 0.97 },
+        html2canvas: { scale: 2, useCORS: true, logging: false },
+        jsPDF:      { unit: 'mm', format: 'a4', orientation: 'portrait' }
+    };
+
+    html2pdf().set(opt).from(element).save().then(() => {
+        btnText.textContent = 'Download PDF';
+        btn.disabled = false;
+    });
+}
+</script>
+
+<div class="page">
+
+    <!-- ── Security Summary Card ─────────────────────────────────── -->
+    <div class="summary-card">
+
+        <div class="summary-header">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="#58a6ff" stroke-width="2" stroke-linejoin="round"/>
+            </svg>
+            <h2>Security Summary</h2>
+        </div>
+
+        <div class="summary-grid">
+
+            <div class="stat-box">
+                <div class="stat-icon vuln-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                        <path d="M10.29 3.86L1.82 18C1.55 18.5 1.55 19.5 2.18 20.13C2.58 20.72 3.12 21 3.68 21H20.32C20.88 21 21.42 20.72 21.82 20.13C22.45 19.5 22.45 18.5 22.18 18L13.71 3.86C13.4 3.33 12.72 3 12 3C11.28 3 10.6 3.33 10.29 3.86Z" stroke="#8b949e" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 9V13M12 17H12.01" stroke="#8b949e" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Total Vulnerabilities</span>
+                    <span class="stat-value">{{ findings|length }}</span>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon high-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                        <circle cx="12" cy="12" r="10" stroke="#f85149" stroke-width="2"/>
+                        <path d="M12 8V12M12 16H12.01" stroke="#f85149" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">High Severity</span>
+                    <span class="stat-value high-val">{{ high }}</span>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon medium-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                        <circle cx="12" cy="12" r="10" stroke="#d29922" stroke-width="2"/>
+                        <path d="M12 8V12M12 16H12.01" stroke="#d29922" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Medium Severity</span>
+                    <span class="stat-value medium-val">{{ medium }}</span>
+                </div>
+            </div>
+
+            <div class="stat-box">
+                <div class="stat-icon low-icon">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                        <circle cx="12" cy="12" r="10" stroke="#3fb950" stroke-width="2"/>
+                        <path d="M9 12L11 14L15 10" stroke="#3fb950" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </div>
+                <div class="stat-info">
+                    <span class="stat-label">Low Severity</span>
+                    <span class="stat-value low-val">{{ low }}</span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Score -->
+        <div class="score-section">
+            <div class="score-row">
+                <div class="score-label">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                        <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" stroke="#58a6ff" stroke-width="2" stroke-linejoin="round"/>
+                    </svg>
+                    Security Score
+                </div>
+                <span class="score-num">{{ score }}<span class="score-denom">/100</span></span>
+            </div>
+            <div class="progress-bar-bg">
+                <div class="progress-bar-fill {% if score >= 80 %}fill-low{% elif score >= 50 %}fill-medium{% else %}fill-high{% endif %}"
+                     style="width: {{ score }}%"></div>
+            </div>
+        </div>
+
+        <!-- Risk Level -->
+        <div class="risk-row">
+            <div class="risk-label">
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="16" height="16">
+                    <path d="M12 2L4 6V12C4 16.4 7.4 20.5 12 22C16.6 20.5 20 16.4 20 12V6L12 2Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/>
+                </svg>
+                Risk Level
+            </div>
+            <span class="risk-badge {% if risk == 'LOW RISK' %}risk-low{% elif risk == 'MEDIUM RISK' %}risk-medium{% else %}risk-high{% endif %}">
+                {{ risk }}
+            </span>
+        </div>
+
+    </div>
+
+    <!-- ── Vulnerability Cards ─────────────────────────────────────── -->
+    {% set owasp_map = {
+        "SQL Injection":    "OWASP A03:2021 – Injection",
+        "XSS":              "OWASP A03:2021 – Cross-Site Scripting",
+        "Command Injection":"OWASP A03:2021 – Injection",
+        "Path Traversal":   "OWASP A01:2021 – Broken Access Control",
+        "Hardcoded Secret": "OWASP A02:2021 – Cryptographic Failures"
+    } %}
+
+    {% if findings %}
+
+        <div class="findings-header">
+            <h2>
+                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="18" height="18">
+                    <path d="M10.29 3.86L1.82 18C1.55 18.5 1.55 19.5 2.18 20.13C2.58 20.72 3.12 21 3.68 21H20.32C20.88 21 21.42 20.72 21.82 20.13C22.45 19.5 22.45 18.5 22.18 18L13.71 3.86C13.4 3.33 12.72 3 12 3C11.28 3 10.6 3.33 10.29 3.86Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M12 9V13M12 17H12.01" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                </svg>
+                Detected Vulnerabilities
+            </h2>
+            <span class="count-badge">{{ findings|length }}</span>
+        </div>
+
+        {% for item in findings %}
+
+        {% set ns = namespace(lang="Code", lang_class="lang-default") %}
+        {% if 'echo ' in item.code or '$_GET' in item.code or '$_POST' in item.code or '$conn' in item.code or '<?php' in item.code or '$stmt' in item.code or 'readfile' in item.code or 'system(' in item.code or 'exec(' in item.code or 'shell_exec' in item.code %}
+            {% set ns.lang = "PHP" %}
+            {% set ns.lang_class = "lang-php" %}
+        {% elif 'os.getenv' in item.code or 'import ' in item.code or 'def ' in item.code or 'print(' in item.code %}
+            {% set ns.lang = "Python" %}
+            {% set ns.lang_class = "lang-python" %}
+        {% elif 'console.log' in item.code or 'function ' in item.code or 'const ' in item.code or 'let ' in item.code or 'var ' in item.code %}
+            {% set ns.lang = "JavaScript" %}
+            {% set ns.lang_class = "lang-js" %}
+        {% elif 'SELECT ' in item.code or 'INSERT ' in item.code or 'UPDATE ' in item.code or 'DELETE ' in item.code %}
+            {% set ns.lang = "SQL" %}
+            {% set ns.lang_class = "lang-sql" %}
+        {% endif %}
+
+        <div class="card {{ item.severity.lower() }}">
+
+            <!-- Card Header -->
+            <div class="card-header">
+                <div class="card-title-group">
+                    <h3 class="card-title">{{ item.type }}</h3>
+                    <span class="lang-badge {{ ns.lang_class }}">{{ ns.lang }}</span>
+                    <span class="severity-badge sev-{{ item.severity.lower() }}">
+                        {% if item.severity == "HIGH" %}
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="11" height="11"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5"/><path d="M12 8V12M12 16H12.01" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/></svg>
+                        {% elif item.severity == "MEDIUM" %}
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="11" height="11"><path d="M10.29 3.86L1.82 18C1.55 18.5 1.55 19.5 2.18 20.13C2.58 20.72 3.12 21 3.68 21H20.32C20.88 21 21.42 20.72 21.82 20.13C22.45 19.5 22.45 18.5 22.18 18L13.71 3.86C13.4 3.33 12.72 3 12 3C11.28 3 10.6 3.33 10.29 3.86Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        {% else %}
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="11" height="11"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2.5"/><path d="M9 12L11 14L15 10" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                        {% endif %}
+                        {{ item.severity }}
+                    </span>
+                </div>
+
+                <div class="card-meta">
+                    <span class="meta-item owasp-tag">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                            <rect x="3" y="11" width="18" height="11" rx="2" stroke="currentColor" stroke-width="2"/>
+                            <path d="M7 11V7C7 4.79 8.79 3 11 3H13C15.21 3 17 4.79 17 7V11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        {{ owasp_map.get(item.type, "OWASP – Security Misconfiguration") }}
+                    </span>
+                    <span class="meta-item line-tag">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="12" height="12">
+                            <path d="M14 2H6C5.47 2 4.96 2.21 4.59 2.59C4.21 2.96 4 3.47 4 4V20C4 20.53 4.21 21.04 4.59 21.41C4.96 21.79 5.47 22 6 22H18C18.53 22 19.04 21.79 19.41 21.41C19.79 21.04 20 20.53 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <line x1="8" y1="13" x2="16" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                            <line x1="8" y1="17" x2="12" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Line {{ item.line }}
+                    </span>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <p class="card-description">{{ item.description }}</p>
+
+            <!-- Recommended Fix -->
+            <div class="info-block">
+                <div class="info-label">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="13" height="13">
+                        <path d="M14.7 6.3C15.09 6.69 15.09 7.31 14.7 7.71L7.41 15L5 15L5 12.59L12.3 5.3C12.68 4.91 13.31 4.91 13.7 5.3L14.7 6.3Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="5" y1="19" x2="19" y2="19" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                    </svg>
+                    Recommended Fix
+                </div>
+                <p class="info-text">{{ item.fix }}</p>
+            </div>
+
+            <!-- Code Blocks -->
+            <div class="code-section">
+
+                <div class="code-block">
+                    <div class="code-label vuln-label">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="13" height="13">
+                            <polyline points="16,18 22,12 16,6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <polyline points="8,6 2,12 8,18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Vulnerable Code
+                    </div>
+                    <pre class="code-pre vuln-code">{{ item.code }}</pre>
+                </div>
+
+                <div class="code-block">
+                    <div class="code-label secure-label">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="13" height="13">
+                            <path d="M9 12L11 14L15 10M21 12C21 16.97 16.97 21 12 21C7.03 21 3 16.97 3 12C3 7.03 7.03 3 12 3C16.97 3 21 7.03 21 12Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                        Secure Example
+                    </div>
+                    <pre class="code-pre secure-code">{{ item.secure_code }}</pre>
+                </div>
+
+            </div>
+
+            <!-- AI Analysis -->
+            <div class="ai-block">
+                <div class="ai-header">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="15" height="15">
+                        <path d="M12 2C6.48 2 2 6.48 2 12C2 17.52 6.48 22 12 22C17.52 22 22 17.52 22 12C22 6.48 17.52 2 12 2Z" stroke="currentColor" stroke-width="2"/>
+                        <path d="M8 14S9.5 16 12 16S16 14 16 14" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        <line x1="9" y1="9" x2="9.01" y2="9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                        <line x1="15" y1="9" x2="15.01" y2="9" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    AI Analysis
+                </div>
+                <div class="ai-content">{{ item.ai_explanation }}</div>
+            </div>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="no-findings">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="52" height="52">
+                <path d="M22 11.08V12C22 17.52 17.52 22 12 22C6.48 22 2 17.52 2 12C2 6.48 6.48 2 12 2C13.85 2 15.58 2.5 17.07 3.38" stroke="#3fb950" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                <polyline points="22,4 12,14.01 9,11.01" stroke="#3fb950" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+            <h3>No Vulnerabilities Found</h3>
+            <p>Your code passed all security checks. Great work!</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+</body>
+</html>
